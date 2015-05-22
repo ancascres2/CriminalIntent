@@ -1,5 +1,9 @@
 package com.example.angel.criminalintent;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -8,16 +12,27 @@ import java.util.UUID;
  */
 public class Crime {
 
+    private static final String JSON_ID = "id";
+    private static final String JSON_TITLE = "title";
+    private static final String JSON_DATE = "date";
+    private static final String JSON_SOLVED = "solved";
+
     private UUID mId;
     private String mTitle;
-    private Date mDate;
+    private Date mDate = new Date();
     private boolean mSolved;
 
 
     public Crime(){
         // Generate unique identifier
         mId = UUID.randomUUID();
-        mDate = new Date();
+    }
+
+    public Crime(JSONObject json) throws JSONException {
+        mId = UUID.fromString(json.getString(JSON_ID));
+        mTitle = json.getString(JSON_TITLE);
+        mDate = new Date(json.getLong(JSON_DATE));
+        mSolved = json.getBoolean(JSON_SOLVED);
     }
 
     @Override
@@ -51,5 +66,14 @@ public class Crime {
 
     public void setmSolved(boolean mSolved) {
         this.mSolved = mSolved;
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put(JSON_ID, mId.toString());
+        json.put(JSON_TITLE, mTitle);
+        json.put(JSON_DATE, mDate.getTime());
+        json.put(JSON_SOLVED, mSolved);
+        return json;
     }
 }
